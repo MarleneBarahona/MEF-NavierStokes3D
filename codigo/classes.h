@@ -1,17 +1,19 @@
 enum lines {NOLINE,SINGLELINE,DOUBLELINE};
-enum modes {NOMODE,INT_FLOAT,INT_FLOAT_FLOAT,INT_INT_INT_INT};
-enum parameters {TAU,K_KTE,DELTA, LAMBDA,ETA, EXTERNAL_FORCE_X,EXTERNAL_FORCE_Y};
+enum modes {NOMODE,INT_FLOAT,INT_FLOAT_FLOAT_FLOAT,INT_INT_INT_INT_INT};
+//enum parameters {TAU,K_KTE,DELTA, LAMBDA,ETA, EXTERNAL_FORCE_X,EXTERNAL_FORCE_Y};
 enum sizes {NODES,ELEMENTS,DIRICHLET};
-enum coords {EQUIS,YE};
+enum coords {EQUIS,YE,ZETA};
 
 class item{
     protected:
         int id;
         float x;
         float y;
+        float z;
         int node1;
         int node2;
         int node3;
+        int node4;
         float value;
     public:
         void setId(int identifier) {
@@ -25,7 +27,9 @@ class item{
         void setY(float y_coord) {
             y = y_coord;
         }
-
+        void setZ(float z_coord) {
+            z = z_coord;
+        }
         void setNode1(int node_1) {
             node1 = node_1;
         }
@@ -37,7 +41,9 @@ class item{
         void setNode3(int node_3) {
             node3 = node_3;
         }
-
+        void setNode4(int node_4) {
+            node4 = node_4;
+                }
         void setValue(float value_to_assign) {
             value = value_to_assign;
         }
@@ -53,7 +59,9 @@ class item{
         float getY() {
             return y;
         }
-
+        float getZ() {
+            return z;
+        }
         int getNode1() {
             return node1;
         }
@@ -65,22 +73,25 @@ class item{
         int getNode3() {
             return node3;
         }
-
+        int getNode4() {
+            return node4;
+        }
         float getValue() {
             return value;
         }
 
-        virtual void setValues(int a,float b,float c,int d,int e,int f,float g)=0;
+        virtual void setValues(int a,float b,float c,float d,int e,int f,float g,float h)=0;
 
 };
 
 class node: public item{
 
     public:
-        void setValues(int a,float b,float c,int d,int e,int f,float g){
+        void setValues(int a,float b,float c,float d,int e,int f,float g,float h){
             id = a;
             x = b;
             y = c;
+            z = d;
         }
 
 };
@@ -88,11 +99,12 @@ class node: public item{
 class element: public item{
 
     public:
-        void setValues(int a,float b,float c,int d,int e,int f,float g){
+        void setValues(int a,float b,float c,float d,int e,int f,float g,float h){
             id = a;
-            node1 = d;
-            node2 = e;
-            node3 = f;
+            node1 = e;
+            node2 = f;
+            node3 = g;
+            node4 = h;
         }
 
 };
@@ -101,7 +113,7 @@ class condition: public item{
 
     public:
 
-        void setValues(int a,float b,float c,int d,int e,int f,float g){
+        void setValues(int a,float b,float c,float d,int e,int f,float g,float h){
             node1 = d;
             value = g;
         }
@@ -109,7 +121,7 @@ class condition: public item{
 };
 
 class mesh{
-        float parameters[6];
+        //float parameters[6];
         int sizes[3];
         node *node_list;
         element *element_list;
@@ -117,7 +129,7 @@ class mesh{
         condition *dirichlet_list;
         //condition *neumann_list;
     public:
-        void setParameters(float tau,float k_kte, float delta, float lambda, float eta, float f_x, float f_y){
+        /*void setParameters(float tau,float k_kte, float delta, float lambda, float eta, float f_x, float f_y){
             parameters[TAU]=tau;
             parameters[K_KTE]=k_kte;
             parameters[DELTA]=delta;
@@ -125,7 +137,7 @@ class mesh{
             parameters[ETA]=eta;
             parameters[EXTERNAL_FORCE_X]=f_x;
             parameters[EXTERNAL_FORCE_Y]=f_y;
-        }
+        }*/
         void setSizes(int nnodes,int neltos,int ndirich){
             sizes[NODES] = nnodes;
             sizes[ELEMENTS] = neltos;
@@ -134,9 +146,9 @@ class mesh{
         int getSize(int s){
             return sizes[s];
         }
-        float getParameter(int p){
+        /*float getParameter(int p){
             return parameters[p];
-        }
+        }*/
         void createData(){
             node_list = new node[sizes[NODES]];
             element_list = new element[sizes[ELEMENTS]];

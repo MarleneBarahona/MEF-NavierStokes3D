@@ -11,17 +11,17 @@ void obtenerDatos(istream &file,int nlines,int n,int mode,item* item_list){
         case INT_FLOAT:
             int e0; float r0;
             file >> e0 >> r0;
-            item_list[i].setValues(0,0,0,e0,0,0,r0);
+            item_list[i].setValues(0,0,0,e0,0,0,r0,0);
             break;
-        case INT_FLOAT_FLOAT:
-            int e; float r,rr;
-            file >> e >> r >> rr;
-            item_list[i].setValues(e,r,rr,0,0,0,0);
+        case INT_FLOAT_FLOAT_FLOAT:
+            int e; float r,rr,rrr;
+            file >> e >> r >> rr >> rrr;
+            item_list[i].setValues(e,r,rr,rrr,0,0,0,0);
             break;
-        case INT_INT_INT_INT:
-            int e1,e2,e3,e4;
-            file >> e1 >> e2 >> e3 >> e4;
-            item_list[i].setValues(e1,0,0,e2,e3,e4,0);
+        case INT_INT_INT_INT_INT:
+            int e1,e2,e3,e4,e5;
+            file >> e1 >> e2 >> e3 >> e4 >> e5;
+            item_list[i].setValues(e1,0,0,e2,e3,e4,0,e5);
             break;
         }
     }
@@ -74,20 +74,20 @@ void fusionDirichlet(int n1,condition* list1,int n2,condition* list2,int n3,cond
 void leerMallayCondiciones(mesh &m,char *filename){
     char inputfilename[150];
     ifstream file;
-    float tau,k_kte,delta, lambda, eta, f_x,f_y;
+    //float tau,k_kte,delta, lambda, eta, f_x,f_y;
     int nnodes,neltos,ndirich_u,ndirich_v,ndirich_p;
     condition *dirichlet_u, *dirichlet_v, *dirichlet_p;
 
     addExtension(inputfilename,filename,".dat");
     file.open(inputfilename);
 
-    file >> tau >> k_kte >> delta >> lambda >> f_x >> f_y >> eta;
+    //file >> tau >> k_kte >> delta >> lambda >> f_x >> f_y >> eta;
     //file >> tau >> k_kte >> lambda >> f_x >> f_y >> delta >> eta;
     //cout <<u_bar<<nu<<rho<<f_x<<f_y<<"\n";
     file >> nnodes >> neltos >> ndirich_u >> ndirich_v >>ndirich_p;
     //cout <<nnodes<<neltos<<ndirich_u<<ndirich_v<<ndirich_p<<"\n";
 
-    m.setParameters(tau,k_kte,delta,lambda, eta,f_x,f_y);
+    //m.setParameters(tau,k_kte,delta,lambda, eta,f_x,f_y);
     m.setSizes(nnodes,neltos,ndirich_u+ndirich_v+ndirich_p);
     m.createData();
 
@@ -95,8 +95,8 @@ void leerMallayCondiciones(mesh &m,char *filename){
     dirichlet_v = new condition[ndirich_v];
     dirichlet_p = new condition[ndirich_p];
 
-    obtenerDatos(file,SINGLELINE,nnodes,INT_FLOAT_FLOAT,m.getNodes());
-    obtenerDatos(file,DOUBLELINE,neltos,INT_INT_INT_INT,m.getElements());
+    obtenerDatos(file,SINGLELINE,nnodes,INT_FLOAT_FLOAT_FLOAT,m.getNodes());
+    obtenerDatos(file,DOUBLELINE,neltos,INT_INT_INT_INT_INT,m.getElements());
     obtenerDatos(file,DOUBLELINE,ndirich_u,INT_FLOAT,dirichlet_u);
     obtenerDatos(file,DOUBLELINE,ndirich_v,INT_FLOAT,dirichlet_v);
     obtenerDatos(file,DOUBLELINE,ndirich_p,INT_FLOAT,dirichlet_p);

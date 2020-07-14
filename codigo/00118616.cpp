@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     Vector T;
 
     cout << "IMPLEMENTACI"<<char(224)<<"N DEL M"<<char(144)<<"TODO DE LOS ELEMENTOS FINITOS\n"
-         << "\t- ECUACIONES DE NAVIER-STOKES\n" << "\t- 2 DIMENSIONES\n"
+         << "\t- ECUACIONES DE NAVIER-STOKES\n" << "\t- 3 DIMENSIONES\n"
          << "\t- FUNCIONES DE FORMA LINEALES\n" << "\t- PESOS DE GALERKIN\n"
          << "*********************************************************************************\n\n";
 
