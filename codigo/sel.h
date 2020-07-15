@@ -4,6 +4,7 @@ node selectNode(int i, element e,mesh &m){
 		case 1: n = m.getNode(e.getNode1()-1); break;
 		case 2: n = m.getNode(e.getNode2()-1); break;
 		case 3: n = m.getNode(e.getNode3()-1); break;
+        //case 4: n = m.getNode(e.getNode4());
 	}
 	return n;
 }
@@ -13,7 +14,7 @@ float selectCoord(int c, node n){
 	switch(c){
 		case EQUIS: v = n.getX(); break;
 		case YE: v = n.getY(); break;
-        case ZETA: v = n.getZ(); break;
+        //case ZETA: v = n.getZ(); break;
 	}
 	return v;
 }
@@ -26,17 +27,26 @@ float calcularTenedor(element e, int coord, int i, int j,mesh &m){
 
 float calculateLocalD(int i,mesh m){
     Matrix matriz;
-    Vector row1, row2;
+    Vector row1, row2, row3;
 
     element e = m.getElement(i);
-    node n1 = m.getNode(e.getNode1()-1);
+    /*node n1 = m.getNode(e.getNode1()-1);
     node n2 = m.getNode(e.getNode2()-1);
-    node n3 = m.getNode(e.getNode3()-1);
+    node n3 = m.getNode(e.getNode3()-1);*/
 
-	row1.push_back(calcularTenedor(e,EQUIS,2,1,m)); row1.push_back(calcularTenedor(e,YE,2,1,m));
-	row2.push_back(calcularTenedor(e,EQUIS,3,1,m)); row2.push_back(calcularTenedor(e,YE,3,1,m));
+	row1.push_back(calcularTenedor(e,EQUIS,2,1,m)); 
+    row1.push_back(calcularTenedor(e,YE,2,1,m));
+    row1.push_back(calcularTenedor(e,ZETA,2,1,m));
 
-	matriz.push_back(row1); matriz.push_back(row2);
+	row2.push_back(calcularTenedor(e,EQUIS,3,1,m)); 
+    row2.push_back(calcularTenedor(e,YE,3,1,m));
+    row2.push_back(calcularTenedor(e,ZETA,3,1,m));
+	
+    row3.push_back(calcularTenedor(e,EQUIS,4,1,m)); 
+    row3.push_back(calcularTenedor(e,YE,4,1,m));
+    row3.push_back(calcularTenedor(e,ZETA,4,1,m));
+    printf("Entramos a D :o \n");
+    matriz.push_back(row1); matriz.push_back(row2); matriz.push_back(row3);
 
     return determinant(matriz);
 }
@@ -51,7 +61,8 @@ float calculateLocalArea(int i,mesh m){
     node n1 = m.getNode(e.getNode1()-1);
     node n2 = m.getNode(e.getNode2()-1);
     node n3 = m.getNode(e.getNode3()-1);
-
+    //node n4 = m.getNode(e.getNode4()-1);
+    
     a = calculateMagnitude(n2.getX()-n1.getX(),n2.getY()-n1.getY());
     b = calculateMagnitude(n3.getX()-n2.getX(),n3.getY()-n2.getY());
     c = calculateMagnitude(n3.getX()-n1.getX(),n3.getY()-n1.getY());
@@ -67,9 +78,11 @@ void calculateLocalA(int i,Matrix &A,mesh m){
     node n1 = m.getNode(e.getNode1()-1);
     node n2 = m.getNode(e.getNode2()-1);
     node n3 = m.getNode(e.getNode3()-1);
+    //node n4 = m.getNode(e.getNode4()-1);
 
     A.at(0).at(0) = calcularTenedor(e,YE,3,1,m);  A.at(0).at(1) = calcularTenedor(e,YE,1,2,m);
     A.at(1).at(0) = calcularTenedor(e,EQUIS,1,3,m);  A.at(1).at(1) = calcularTenedor(e,EQUIS,2,1,m);
+    //A.at(2).at(0) = calcularTenedor(e,ZETA,1,3,m);  A.at(2).at(1) = calcularTenedor(e,ZETA,2,1,m);
 }
 
 //Matriz Beta
@@ -96,30 +109,73 @@ void ubicarSubMatriz(Matrix &K,int fi,int ff,int ci,int cf,Matrix M){
     }
 }
 
-void calculateGammaMatrix(Matrix& m){
-	zeroes(m,6,2);
-
-	m.at(0).at(0) = 1;   m.at(0).at(1) = 0;
+void calculateGammaMatrix(int i,Matrix &Gamma, mesh m){
+//void calculateGammaMatrix(Matrix& m){
+    zeroes(Gamma,12,3);
+    element e = m.getElement(i);
+    float X1 = selectCoord(EQUIS,selectNode(1,e,m));
+    float X2 = selectCoord(EQUIS,selectNode(2,e,m));
+    float X3 = selectCoord(EQUIS,selectNode(3,e,m));
+    float X4 = selectCoord(EQUIS,selectNode(4,e,m));
+    //Pos 0,0 -> v
+    Gamma.at(0).at(0) = (3*(X1*X1) + 2*(X1*X2) + 2*(X1*X3) + 2*(X1*X4) + (X2*X2) + (X2*X4) + (X3*X3));
+    //Pos 1,0 -> s
+    Gamma.at(1).at(0) = ((X1*X1) + X1*((2*X2)+X3+X4) + 3*(X2*X2) + (2*X2)*(X3+X4) + (X3*X3) + (X3*X4) + (X4*X4));
+    //Pos 2,0 -> t
+    Gamma.at(2).at(0) = ((X1*X1) + X1*(X2+(2*X3)+X4) + (X2*X2) + X2*((2*X3)+X4) + 3*(X3*X3) + 2*(X3*X4) + (X4*X4));
+    //Pos 3,0 -> u
+    Gamma.at(3).at(0) = ((X1*X1) + X1*(X2+X3+(2*X4)) + (X2*X2) + X2*(X3+(2*X4)) + (X3*X3) + 2*(X3*X4) + 3*(X4*X4));
+    
+    //Pos 4,2 -> v
+    Gamma.at(0).at(0) = (3*(X1*X1) + 2*(X1*X2) + 2*(X1*X3) + 2*(X1*X4) + (X2*X2) + (X2*X4) + (X3*X3));
+    //Pos 5,2 -> s
+    Gamma.at(1).at(0) = ((X1*X1) + X1*((2*X2)+X3+X4) + 3*(X2*X2) + (2*X2)*(X3+X4) + (X3*X3) + (X3*X4) + (X4*X4));
+    //Pos 6,2 -> t
+    Gamma.at(2).at(0) = ((X1*X1) + X1*(X2+(2*X3)+X4) + (X2*X2) + X2*((2*X3)+X4) + 3*(X3*X3) + 2*(X3*X4) + (X4*X4));
+    //Pos 7,2 -> u
+    Gamma.at(3).at(0) = ((X1*X1) + X1*(X2+X3+(2*X4)) + (X2*X2) + X2*(X3+(2*X4)) + (X3*X3) + 2*(X3*X4) + 3*(X4*X4));
+    
+    //Pos 8,3 -> v
+    Gamma.at(0).at(0) = (3*(X1*X1) + 2*(X1*X2) + 2*(X1*X3) + 2*(X1*X4) + (X2*X2) + (X2*X4) + (X3*X3));
+    //Pos 9,3 -> s
+    Gamma.at(1).at(0) = ((X1*X1) + X1*((2*X2)+X3+X4) + 3*(X2*X2) + (2*X2)*(X3+X4) + (X3*X3) + (X3*X4) + (X4*X4));
+    //Pos 10,3 -> t
+    Gamma.at(2).at(0) = ((X1*X1) + X1*(X2+(2*X3)+X4) + (X2*X2) + X2*((2*X3)+X4) + 3*(X3*X3) + 2*(X3*X4) + (X4*X4));
+    //Pos 11,3 -> u
+    Gamma.at(3).at(0) = ((X1*X1) + X1*(X2+X3+(2*X4)) + (X2*X2) + X2*(X3+(2*X4)) + (X3*X3) + 2*(X3*X4) + 3*(X4*X4));
+    printf("Calculamos Gamma compa ajua \n");
+    //float X1 = e.getNode1().getX(); 
+    //zeroes(m,12,3);
+	/*m.at(0).at(0) = 1;   m.at(0).at(1) = 0;
 	m.at(1).at(0) = 1; m.at(1).at(1) = 0;
 	m.at(2).at(0) = 1; m.at(2).at(1) = 0;
 	m.at(3).at(0) = 0;   m.at(3).at(1) = 1;
 	m.at(4).at(0) = 0;   m.at(4).at(1) = 1;
-	m.at(5).at(0) = 0;   m.at(5).at(1) = 1;
+	m.at(5).at(0) = 0;   m.at(5).at(1) = 1;*/
 }
 
 float calculateLocalJ(int i,mesh m){
     Matrix matriz;
-    Vector row1, row2;
+    Vector row1, row2, row3;
 
     element e = m.getElement(i);
-    node n1 = m.getNode(e.getNode1()-1);
+    /*node n1 = m.getNode(e.getNode1()-1);
     node n2 = m.getNode(e.getNode2()-1);
     node n3 = m.getNode(e.getNode3()-1);
+    node n4 = m.getNode(e.getNode4()-1);*/
+	row1.push_back(calcularTenedor(e,EQUIS,2,1,m)); 
+    row1.push_back(calcularTenedor(e,EQUIS,3,1,m));
+    row1.push_back(calcularTenedor(e,EQUIS,4,1,m));
 
-	row1.push_back(calcularTenedor(e,EQUIS,2,1,m)); row1.push_back(calcularTenedor(e,EQUIS,3,1,m));
-	row2.push_back(calcularTenedor(e,YE,2,1,m)); row2.push_back(calcularTenedor(e,YE,3,1,m));
+	row2.push_back(calcularTenedor(e,YE,2,1,m)); 
+    row2.push_back(calcularTenedor(e,YE,3,1,m));
+    row2.push_back(calcularTenedor(e,YE,4,1,m));
 
-	matriz.push_back(row1); matriz.push_back(row2);
+    row3.push_back(calcularTenedor(e,ZETA,2,1,m)); 
+    row3.push_back(calcularTenedor(e,ZETA,3,1,m)); 
+    row3.push_back(calcularTenedor(e,ZETA,4,1,m)); 
+    printf("Entramos al Jacobiano :D \n");
+	matriz.push_back(row1); matriz.push_back(row2); matriz.push_back(row3);
 
     return determinant(matriz);
 }
@@ -139,13 +195,13 @@ Matrix createLocalK(int e,mesh &m){
     //tau = m.getParameter(TAU);
     J = calculateLocalJ(e,m);
     D = calculateLocalD(e,m);
-
+    //printf("pasa por aquixd");
     if(D == 0){
         cout << "\n!---CATASTROPHIC FAILURE---!\n";
         exit(EXIT_FAILURE);
     }
     //Preparando matrix A
-    calculateGammaMatrix(g_matrix);
+    calculateGammaMatrix(e,g_matrix,m);
     calculateLocalA(e,Alpha,m);
     calculateBetaMatrix(Beta);
     productRealMatrix(J/(24*D),productMatrixMatrix(g_matrix,productMatrixMatrix(Alpha,Beta,2,2,6),6,2,6),matrixA);
@@ -187,7 +243,7 @@ Vector createLocalb(int e,mesh &m){
     Matrix g_matrix;
 
     float J = calculateLocalJ(e,m);
-    calculateGammaMatrix(g_matrix);
+    calculateGammaMatrix(e,g_matrix,m);
     zeroes(f,2);
 
     zeroes(b0,6);

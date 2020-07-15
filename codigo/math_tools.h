@@ -100,8 +100,12 @@ void getMinor(Matrix &M,int i, int j){
 }
 
 float determinant(Matrix M){
-    if(M.size() == 1) return M.at(0).at(0);
-    else{
+    //printf("ola toy en el if det ");
+    if(M.size() == 1){
+        //printf("ola toy en el if det ");
+         return M.at(0).at(0);
+    }else{
+        //printf("ola toy en el det");
         float det=0.0;
         for(int i=0;i<M.at(0).size();i++){
             Matrix minor;
@@ -109,6 +113,7 @@ float determinant(Matrix M){
             getMinor(minor,0,i);
             det += pow(-1,i)*M.at(0).at(i)*determinant(minor);
         }
+        //printf(det);
         return det;
     }
 }
