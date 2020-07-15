@@ -64,19 +64,20 @@ void addArray(int* index, int n,condition* list, condition* listf){
     }
 }
 
-void fusionDirichlet(int n1,condition* list1,int n2,condition* list2,int n3,condition* list3,condition* list){
+void fusionDirichlet(int n1,condition* list1,int n2,condition* list2,int n3,condition* list3,int n4,condition* list4,condition* list){
     int index = 0;
     addArray(&index,n1,list1,list);
     addArray(&index,n2,list2,list);
     addArray(&index,n3,list3,list);
+    addArray(&index,n4,list4,list);
 }
 
 void leerMallayCondiciones(mesh &m,char *filename){
     char inputfilename[150];
     ifstream file;
     //float tau,k_kte,delta, lambda, eta, f_x,f_y;
-    int nnodes,neltos,ndirich_u,ndirich_v,ndirich_p;
-    condition *dirichlet_u, *dirichlet_v, *dirichlet_p;
+    int nnodes,neltos,ndirich_u,ndirich_v, ndirich_w,ndirich_p;
+    condition *dirichlet_u, *dirichlet_v, *dirichlet_w, *dirichlet_p;
 
     addExtension(inputfilename,filename,".dat");
     file.open(inputfilename);
@@ -84,31 +85,33 @@ void leerMallayCondiciones(mesh &m,char *filename){
     //file >> tau >> k_kte >> delta >> lambda >> f_x >> f_y >> eta;
     //file >> tau >> k_kte >> lambda >> f_x >> f_y >> delta >> eta;
     //cout <<u_bar<<nu<<rho<<f_x<<f_y<<"\n";
-    file >> nnodes >> neltos >> ndirich_u >> ndirich_v >>ndirich_p;
+    file >> nnodes >> neltos >> ndirich_u >> ndirich_v >> ndirich_w >>ndirich_p;
     //cout <<nnodes<<neltos<<ndirich_u<<ndirich_v<<ndirich_p<<"\n";
 
     //m.setParameters(tau,k_kte,delta,lambda, eta,f_x,f_y);
-    m.setSizes(nnodes,neltos,ndirich_u+ndirich_v+ndirich_p);
+    m.setSizes(nnodes,neltos,ndirich_u+ndirich_v+ndirich_w+ndirich_p);
     m.createData();
 
     dirichlet_u = new condition[ndirich_u];
     dirichlet_v = new condition[ndirich_v];
+    dirichlet_w = new condition[ndirich_w];
     dirichlet_p = new condition[ndirich_p];
 
     obtenerDatos(file,SINGLELINE,nnodes,INT_FLOAT_FLOAT_FLOAT,m.getNodes());
     obtenerDatos(file,DOUBLELINE,neltos,INT_INT_INT_INT_INT,m.getElements());
     obtenerDatos(file,DOUBLELINE,ndirich_u,INT_FLOAT,dirichlet_u);
     obtenerDatos(file,DOUBLELINE,ndirich_v,INT_FLOAT,dirichlet_v);
+    obtenerDatos(file,DOUBLELINE,ndirich_w,INT_FLOAT,dirichlet_w);
     obtenerDatos(file,DOUBLELINE,ndirich_p,INT_FLOAT,dirichlet_p);
 
     file.close();
 
     correctIndices(ndirich_v,dirichlet_v,nnodes);
-    correctIndices(ndirich_p,dirichlet_p,2*nnodes);
+    correctIndices(ndirich_w,dirichlet_w,2*nnodes);
+    correctIndices(ndirich_p,dirichlet_p,3*nnodes);
+    fusionDirichlet(ndirich_u,dirichlet_u,ndirich_v,dirichlet_v,ndirich_w,dirichlet_w,ndirich_p,dirichlet_p,m.getDirichlet());
 
-    fusionDirichlet(ndirich_u,dirichlet_u,ndirich_v,dirichlet_v,ndirich_p,dirichlet_p,m.getDirichlet());
-
-    correctConditions(ndirich_u+ndirich_v+ndirich_p,m.getDirichlet(),m.getDirichletIndices());
+    correctConditions(ndirich_u+ndirich_v+ndirich_w+ndirich_p,m.getDirichlet(),m.getDirichletIndices());
 }
 
 bool findIndex(int v, int s, int *arr){

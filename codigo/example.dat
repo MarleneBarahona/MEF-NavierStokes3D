@@ -23,6 +23,10 @@ Dirichlet_V
 6           5
 EndDirichlet
 
+Dirichlet_W
+6           5
+EndDirichlet
+
 Dirichlet_P
 5           6
 EndDirichlet
