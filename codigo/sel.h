@@ -87,9 +87,10 @@ void calculateLocalA(int i,Matrix &A,mesh m){
 
 //Matriz Beta
 void calculateBetaMatrix(Matrix &B){
-    zeroes(B,2,6);
-    B.at(0).at(0) = -1; B.at(0).at(1) = 1; B.at(0).at(2) = 0; B.at(0).at(3) = -1; B.at(0).at(4) = 1; B.at(0).at(5) = 0;
-    B.at(1).at(0) = -1; B.at(1).at(1) = 0; B.at(1).at(2) = 1; B.at(1).at(3) = -1; B.at(1).at(4) = 0; B.at(1).at(5) = 1;
+    zeroes(B,3,12);
+    B.at(0).at(0) = -1; B.at(0).at(1) = 1; B.at(0).at(2) = 0; B.at(0).at(3) = 0; B.at(0).at(4) = -1; B.at(0).at(5) = 1; B.at(0).at(6) = 0; B.at(0).at(7) = 0; B.at(0).at(8) = -1; B.at(0).at(9) = 1; B.at(0).at(10) = 0; B.at(0).at(11) = 0; 
+    B.at(1).at(0) = -1; B.at(1).at(1) = 0; B.at(1).at(2) = 1; B.at(1).at(3) = 0; B.at(1).at(4) = -1; B.at(1).at(5) = 0; B.at(1).at(6) = 1; B.at(1).at(7) = 0; B.at(1).at(8) = -1; B.at(1).at(9) = 0; B.at(1).at(10) = 1; B.at(1).at(11) = 0; 
+    B.at(2).at(0) = -1; B.at(2).at(1) = 0; B.at(2).at(2) = 0; B.at(2).at(3) = 1; B.at(2).at(4) = -1; B.at(2).at(5) = 0; B.at(2).at(6) = 0; B.at(2).at(7) = 1; B.at(2).at(8) = -1; B.at(2).at(9) = 0; B.at(2).at(10) = 0; B.at(0).at(11) = 1; 
 }
 
 void calculateBPrima(Matrix &C){
@@ -193,10 +194,12 @@ Matrix createLocalK(int e,mesh &m){
     calculateGammaMatrix(e,g_matrix,m);
     cout << "Gamma: \n";
     showMatrix(g_matrix);
-    cout << "Alpha: \n";
     calculateLocalA(e,Alpha,m);
+    cout << "Alpha: \n";
     showMatrix(Alpha);
     calculateBetaMatrix(Beta);
+    cout << "Beta: \n";
+    showMatrix(Beta);
     productRealMatrix(J/(24*D),productMatrixMatrix(g_matrix,productMatrixMatrix(Alpha,Beta,2,2,6),6,2,6),matrixA);
 
     //Preparando matrixK (En clase conocida simplemente como K)
