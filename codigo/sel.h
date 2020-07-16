@@ -200,7 +200,9 @@ Matrix createLocalK(int e,mesh &m){
     calculateBetaMatrix(Beta);
     cout << "Beta: \n";
     showMatrix(Beta);
-    productRealMatrix(J/(24*D),productMatrixMatrix(g_matrix,productMatrixMatrix(Alpha,Beta,2,2,6),6,2,6),matrixA);
+    productRealMatrix(J/(180),productMatrixMatrix(g_matrix,productMatrixMatrix(Alpha,Beta,3,3,12),12,3,12),matrixA);
+    //cout << "A: \n";
+    //showMatrix(matrixA);
 
     //Preparando matrixK (En clase conocida simplemente como K)
     Ae = calculateLocalArea(e,m);
