@@ -4,7 +4,7 @@ node selectNode(int i, element e,mesh &m){
 		case 1: n = m.getNode(e.getNode1()-1); break;
 		case 2: n = m.getNode(e.getNode2()-1); break;
 		case 3: n = m.getNode(e.getNode3()-1); break;
-        //case 4: n = m.getNode(e.getNode4());
+        case 4: n = m.getNode(e.getNode4()-1); break;
 	}
 	return n;
 }
@@ -14,7 +14,7 @@ float selectCoord(int c, node n){
 	switch(c){
 		case EQUIS: v = n.getX(); break;
 		case YE: v = n.getY(); break;
-        //case ZETA: v = n.getZ(); break;
+        case ZETA: v = n.getZ(); break;
 	}
 	return v;
 }
@@ -43,8 +43,7 @@ float calculateLocalD(int i,mesh m){
     row3.push_back(calcularTenedor(e,YE,4,1,m));
     row3.push_back(calcularTenedor(e,ZETA,4,1,m));
     matriz.push_back(row1); matriz.push_back(row2); matriz.push_back(row3);
-    cout << "D: \n" ;
-    showMatrix(matriz);
+
     return determinant(matriz);
 }
 
