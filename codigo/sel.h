@@ -57,7 +57,6 @@ float calculateLocalArea(int i,mesh m){
     node n1 = m.getNode(e.getNode1()-1);
     node n2 = m.getNode(e.getNode2()-1);
     node n3 = m.getNode(e.getNode3()-1);
-    //node n4 = m.getNode(e.getNode4()-1);
     
     a = calculateMagnitude(n2.getX()-n1.getX(),n2.getY()-n1.getY());
     b = calculateMagnitude(n3.getX()-n2.getX(),n3.getY()-n2.getY());
@@ -69,16 +68,21 @@ float calculateLocalArea(int i,mesh m){
 }
 
 void calculateLocalA(int i,Matrix &A,mesh m){
-    zeroes(A,2);
+    zeroes(A,3,3);
     element e = m.getElement(i);
-    node n1 = m.getNode(e.getNode1()-1);
-    node n2 = m.getNode(e.getNode2()-1);
-    node n3 = m.getNode(e.getNode3()-1);
-    //node n4 = m.getNode(e.getNode4()-1);
+    float X2 = selectCoord(EQUIS,selectNode(2,e,m));
+    float X3 = selectCoord(EQUIS,selectNode(3,e,m));
+    float X4 = selectCoord(EQUIS,selectNode(4,e,m));
+    float Y2 = selectCoord(YE,selectNode(2,e,m));
+    float Y3 = selectCoord(YE,selectNode(3,e,m));
+    float Y4 = selectCoord(YE,selectNode(4,e,m));
+    float Z2 = selectCoord(ZETA,selectNode(2,e,m));
+    float Z3 = selectCoord(ZETA,selectNode(3,e,m));
+    float Z4 = selectCoord(ZETA,selectNode(4,e,m));
 
-    A.at(0).at(0) = calcularTenedor(e,YE,3,1,m);  A.at(0).at(1) = calcularTenedor(e,YE,1,2,m);
-    A.at(1).at(0) = calcularTenedor(e,EQUIS,1,3,m);  A.at(1).at(1) = calcularTenedor(e,EQUIS,2,1,m);
-    //A.at(2).at(0) = calcularTenedor(e,ZETA,1,3,m);  A.at(2).at(1) = calcularTenedor(e,ZETA,2,1,m);
+    A.at(0).at(0) = (Y3*Z4);        A.at(0).at(1) = (-1*(Y2*Z4));   A.at(0).at(2) = (Y2*Z3);
+    A.at(1).at(0) = (-1*(X3*Z4));   A.at(1).at(1) = (X2*Z4);        A.at(1).at(2) = (-1*(X2*Z3));
+    A.at(2).at(0) = (X3*Y4);        A.at(2).at(1) = (-1*(X2*Y4));   A.at(2).at(2) = (X2*Y3);
 }
 
 //Matriz Beta
@@ -164,8 +168,6 @@ float calculateLocalJ(int i,mesh m){
     
 	matriz.push_back(row1); matriz.push_back(row2); matriz.push_back(row3);
 
-    cout << "J: \n";
-    showMatrix(matriz);
     return determinant(matriz);
 }
 
@@ -189,21 +191,21 @@ Matrix createLocalK(int e,mesh &m){
     }
     //Preparando matrix A
     calculateGammaMatrix(e,g_matrix,m);
-    //cout << g_matrix.size();
+    cout << "Gamma: \n";
     showMatrix(g_matrix);
+    cout << "Alpha: \n";
     calculateLocalA(e,Alpha,m);
+    showMatrix(Alpha);
     calculateBetaMatrix(Beta);
     productRealMatrix(J/(24*D),productMatrixMatrix(g_matrix,productMatrixMatrix(Alpha,Beta,2,2,6),6,2,6),matrixA);
 
     //Preparando matrixK (En clase conocida simplemente como K)
-    //k_kte = m.getParameter(K_KTE);
     Ae = calculateLocalArea(e,m);
     transpose(Alpha,Alphat);
     transpose(Beta,Betat);
     productRealMatrix(Ae/(D*D),productMatrixMatrix(Betat,productMatrixMatrix(Alphat,productMatrixMatrix(Alpha,Beta,2,2,6),2,2,6),6,2,6),matrixK);
 
     //Preparando matrixL (En clase conocida simplemente como nada porque no estaba jaja en mi ejercicio era G antes de integrar)
-    //delta = m.getParameter(DELTA);
     calculateBPrima(BPrima);
     productRealMatrix(Ae/(8*(D*D)),productMatrixMatrix(Betat,productMatrixMatrix(Alphat,productMatrixMatrix(Alpha, BPrima,2,2,3),2,2,3),6,2,3),matrixL);
 
