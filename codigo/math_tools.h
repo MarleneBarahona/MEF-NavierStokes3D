@@ -100,7 +100,7 @@ void getMinor(Matrix &M,int i, int j){
 }
 
 float determinant(Matrix M){
-    //printf("ola toy en el if det ");
+    cout << "si entre we ";
     if(M.size() == 1){
         //printf("ola toy en el if det ");
          return M.at(0).at(0);
@@ -113,7 +113,7 @@ float determinant(Matrix M){
             getMinor(minor,0,i);
             det += pow(-1,i)*M.at(0).at(i)*determinant(minor);
         }
-        //printf(det);
+        cout << "det: "<< det<<"\n";
         return det;
     }
 }
@@ -144,7 +144,7 @@ void inverseMatrix(Matrix M, Matrix &Minv){
     cout << "Calculo de determinante...\n";
     float det = determinant(M);
     if(det == 0){
-        cout << "\n!---CATASTROPHIC FAILURE---!\n";
+        cout << "\n!---CATASTROPHIC FAILURE in math---!\n";
         exit(EXIT_FAILURE);
     }
     cout << "Iniciando calculo de cofactores...\n";

@@ -30,8 +30,8 @@ int main(int argc, char *argv[])
     showKs(localKs); showbs(localbs);
     cout << "******************************\n";
 
-    zeroes(K,3*m.getSize(NODES));
-    zeroes(b,3*m.getSize(NODES));
+    zeroes(K,4*m.getSize(NODES));
+    zeroes(b,4*m.getSize(NODES));
     ensamblaje(m,localKs,localbs,K,b);
     showMatrix(K); showVector(b);
     cout << "******************************\n";
