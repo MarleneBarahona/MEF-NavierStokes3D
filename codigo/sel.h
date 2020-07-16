@@ -180,12 +180,12 @@ Matrix createLocalK(int e,mesh &m){
     Matrix K,g_matrix,g_matrix_t,Alpha,Beta,Alphat,Betat,BPrima,BPrimat;
 
     //Preparando matrixA (En clase conocida simplemente como A)
-    J = calculateLocalJ(e,m);
+    /*J = calculateLocalJ(e,m);
     cout << J << "\n";
     D = calculateLocalD(e,m);
-    cout << D;
+    cout << D;*/
     if(D == 0){
-        cout << "\n!---CATASTROPHIC FAILURE en sel---!\n";
+        cout << "\n!---CATASTROPHIC FAILURE EN SEL, F TU DET ES 0--!\n";
         //exit(EXIT_FAILURE);
     }
     //Preparando matrix A
