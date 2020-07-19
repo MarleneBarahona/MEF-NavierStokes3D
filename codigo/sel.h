@@ -46,7 +46,6 @@ float calculateLocalD(int i,mesh m){
 
     return determinant(matriz);
 }
-
 float calculateMagnitude(float v1, float v2){
     return sqrt(pow(v1,2)+pow(v2,2));
 }
@@ -201,14 +200,14 @@ Matrix createLocalK(int e,mesh &m){
     cout << "Beta: \n";
     showMatrix(Beta);
     productRealMatrix(J/(180),productMatrixMatrix(g_matrix,productMatrixMatrix(Alpha,Beta,3,3,12),12,3,12),matrixA);
-    //cout << "A: \n";
-    //showMatrix(matrixA);
+    cout << "A: \n";
+    showMatrix(matrixA);
 
     //Preparando matrixK (En clase conocida simplemente como K)
-    Ae = calculateLocalArea(e,m);
     transpose(Alpha,Alphat);
     transpose(Beta,Betat);
-    productRealMatrix(Ae/(D*D),productMatrixMatrix(Betat,productMatrixMatrix(Alphat,productMatrixMatrix(Alpha,Beta,2,2,6),2,2,6),6,2,6),matrixK);
+    productRealMatrix((J/24),productMatrixMatrix(Betat,productMatrixMatrix(Alphat,productMatrixMatrix(Alpha,Beta,3,3,12),3,3,12),12,3,12),matrixK);
+    cout << "K: \n"; showMatrix(matrixK);
 
     //Preparando matrixL (En clase conocida simplemente como nada porque no estaba jaja en mi ejercicio era G antes de integrar)
     calculateBPrima(BPrima);
